@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BudgetsRouteImport } from './routes/budgets'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const BudgetsRoute = BudgetsRouteImport.update({
   id: '/budgets',
   path: '/budgets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -38,12 +44,14 @@ const TransactionsRoute = TransactionsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/budgets': typeof BudgetsRoute
+  '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
   '/transactions': typeof TransactionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/budgets': typeof BudgetsRoute
+  '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
   '/transactions': typeof TransactionsRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/budgets': typeof BudgetsRoute
+  '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
   '/transactions': typeof TransactionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/budgets' | '/login' | '/transactions'
+  fullPaths: '/' | '/budgets' | '/chat' | '/login' | '/transactions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/budgets' | '/login' | '/transactions'
-  id: '__root__' | '/' | '/budgets' | '/login' | '/transactions'
+  to: '/' | '/budgets' | '/chat' | '/login' | '/transactions'
+  id: '__root__' | '/' | '/budgets' | '/chat' | '/login' | '/transactions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BudgetsRoute: typeof BudgetsRoute
+  ChatRoute: typeof ChatRoute
   LoginRoute: typeof LoginRoute
   TransactionsRoute: typeof TransactionsRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/budgets'
       fullPath: '/budgets'
       preLoaderRoute: typeof BudgetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BudgetsRoute: BudgetsRoute,
+  ChatRoute: ChatRoute,
   LoginRoute: LoginRoute,
   TransactionsRoute: TransactionsRoute,
 }
