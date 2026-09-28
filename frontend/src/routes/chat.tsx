@@ -273,7 +273,7 @@ function ChatPage() {
 
   return (
     <AppLayout>
-      <div className="flex h-[calc(100dvh-7rem)] sm:h-[calc(100vh-8rem)] w-full gap-4 max-w-6xl mx-auto">
+      <div className="flex h-full flex-1 min-h-0 w-full gap-4 max-w-6xl mx-auto overflow-hidden">
         {/* Left Sidebar: Previous Conversations (Desktop & Mobile Drawer) */}
         <aside
           className={`fixed inset-y-0 left-0 z-40 w-72 flex-col border-r border-border bg-card p-3 shadow-lg transition-transform duration-200 md:static md:z-0 md:flex md:w-64 md:rounded-xl md:border md:shadow-xs lg:w-72 ${
@@ -353,20 +353,20 @@ function ChatPage() {
         )}
 
         {/* Right Main Chat Container */}
-        <main className="flex flex-1 flex-col rounded-none sm:rounded-2xl border-0 sm:border border-border bg-background sm:bg-card shadow-none sm:shadow-xs overflow-hidden">
+        <section className="flex flex-1 min-h-0 flex-col h-full rounded-none sm:rounded-2xl border-0 sm:border border-border bg-background sm:bg-card shadow-none sm:shadow-xs overflow-hidden relative">
           {/* Chat Header Bar */}
-          <div className="flex items-center justify-between border-b border-border/60 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-card/80 sm:bg-muted/20 backdrop-blur-xs">
-            <div className="flex items-center gap-2.5">
+          <div className="sticky top-0 z-20 shrink-0 flex items-center justify-between border-b border-border/60 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-card/95 sm:bg-muted/20 backdrop-blur-md">
+            <div className="flex items-center gap-2.5 min-w-0">
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground md:hidden cursor-pointer"
+                className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground md:hidden cursor-pointer shrink-0"
                 aria-label="Toggle history"
               >
                 <PanelLeft className="h-4 w-4" />
               </button>
-              <div>
-                <h1 className="text-sm font-semibold text-foreground flex items-center gap-1.5 truncate max-w-xs sm:max-w-md">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-sm font-semibold text-foreground flex items-center gap-1.5 truncate">
                   <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
                   <span className="truncate">{currentTitle}</span>
                 </h1>
@@ -376,7 +376,7 @@ function ChatPage() {
             <button
               onClick={startNewChat}
               disabled={streaming}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-input bg-card px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-accent disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-input bg-card px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-accent disabled:opacity-50 transition-colors shadow-xs cursor-pointer shrink-0"
             >
               <Plus className="h-3.5 w-3.5 text-primary" />
               New Chat
@@ -384,7 +384,7 @@ function ChatPage() {
           </div>
 
           {/* Messages Scroll Area */}
-          <div className="flex-1 space-y-4 overflow-y-auto px-3 py-3 sm:p-5">
+          <div className="flex-1 min-h-0 space-y-4 overflow-y-auto overscroll-contain px-3 py-3 sm:p-5">
             {loadingHistory ? (
               <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
                 Loading conversation…
@@ -460,7 +460,7 @@ function ChatPage() {
           </div>
 
           {/* Prompt Input Form */}
-          <div className="border-t border-border/60 p-2.5 sm:p-4 bg-card/90 sm:bg-muted/10 backdrop-blur-xs">
+          <div className="sticky bottom-0 z-20 shrink-0 border-t border-border/60 p-2.5 sm:p-4 bg-card/95 sm:bg-muted/10 backdrop-blur-md">
             <form onSubmit={onSubmit} className="flex gap-2">
               <input
                 value={input}
@@ -478,7 +478,7 @@ function ChatPage() {
               </button>
             </form>
           </div>
-        </main>
+        </section>
       </div>
     </AppLayout>
   );

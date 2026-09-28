@@ -46,9 +46,22 @@ export function AppLayout({ children }: { children: ReactNode }) {
     navigate({ to: "/login" });
   }
 
+  const isChat = pathname === "/chat";
+
+  useEffect(() => {
+    if (isChat) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overscrollBehavior = "none";
+      return () => {
+        document.body.style.overflow = "";
+        document.documentElement.style.overscrollBehavior = "";
+      };
+    }
+  }, [isChat]);
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur">
+    <div className={cn("bg-background", isChat ? "h-screen h-[100dvh] overflow-hidden flex flex-col" : "min-h-screen")}>
+      <header className="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur shrink-0">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-3 sm:px-4">
           <Link to="/" className="flex items-center gap-2.5 font-semibold text-foreground shrink-0">
             <img src="/favicon.png" alt="SpendWise" className="h-8 w-8 rounded-lg object-contain shadow-xs" />
@@ -89,12 +102,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {/* Main Content Area (with bottom padding for mobile navigation) */}
+      {/* Main Content Area */}
       <main
         className={cn(
-          "mx-auto max-w-6xl",
-          pathname === "/chat"
-            ? "p-0 sm:px-4 sm:py-6"
+          "mx-auto max-w-6xl w-full",
+          isChat
+            ? "flex-1 min-h-0 overflow-hidden flex flex-col p-0 sm:px-4 sm:py-4 pb-14 sm:pb-4"
             : "px-3 sm:px-4 py-5 sm:py-8 pb-24 sm:pb-8",
         )}
       >
@@ -102,7 +115,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </main>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-md px-2 py-1.5 shadow-lg">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 h-14 border-t border-border bg-card/95 backdrop-blur-md px-2 py-1.5 shadow-lg">
         <div className="grid grid-cols-4 gap-1">
           {NAV.map(({ to, label, icon: Icon }) => {
             const isActive = pathname === to;
