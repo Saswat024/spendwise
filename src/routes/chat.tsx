@@ -59,7 +59,11 @@ function ChatPage() {
     if (!message || streaming) return;
     setInput("");
     setStreaming(true);
-    setMessages((m) => [...m, { role: "user", content: message }, { role: "assistant", content: "" }]);
+    setMessages((m) => [
+      ...m,
+      { role: "user", content: message, charts: [] },
+      { role: "assistant", content: "", charts: [] },
+    ]);
 
     try {
       const res = await fetch(`${API_BASE}/chat`, {
