@@ -7,6 +7,31 @@ interface MarkdownContentProps {
   className?: string;
 }
 
+function renderWithBreaks(node: React.ReactNode): React.ReactNode {
+  if (typeof node === "string") {
+    if (!/<br\s*\/?>/i.test(node)) return node;
+    const parts = node.split(/<br\s*\/?>/gi);
+    return parts.map((part, idx) => (
+      <React.Fragment key={idx}>
+        {idx > 0 && <br />}
+        {part}
+      </React.Fragment>
+    ));
+  }
+  if (Array.isArray(node)) {
+    return node.map((child, idx) => (
+      <React.Fragment key={idx}>{renderWithBreaks(child)}</React.Fragment>
+    ));
+  }
+  if (React.isValidElement(node) && (node.props as any)?.children) {
+    return React.cloneElement(node, {
+      ...(node.props as any),
+      children: renderWithBreaks((node.props as any).children),
+    });
+  }
+  return node;
+}
+
 export function MarkdownContent({ content, className = "" }: MarkdownContentProps) {
   // Normalize citations like 【chart】 to `📊 Chart` badge token
   const formattedContent = content.replace(/【chart】/gi, "`📊 Chart`");
@@ -21,22 +46,22 @@ export function MarkdownContent({ content, className = "" }: MarkdownContentProp
               className="mt-3 mb-1.5 text-base font-bold text-foreground border-b border-border/40 pb-1"
               {...props}
             >
-              {children}
+              {renderWithBreaks(children)}
             </h1>
           ),
           h2: ({ children, ...props }) => (
             <h2 className="mt-3 mb-1 text-sm font-bold text-foreground" {...props}>
-              {children}
+              {renderWithBreaks(children)}
             </h2>
           ),
           h3: ({ children, ...props }) => (
             <h3 className="mt-2.5 mb-1 text-sm font-semibold text-foreground" {...props}>
-              {children}
+              {renderWithBreaks(children)}
             </h3>
           ),
           p: ({ children, ...props }) => (
             <p className="mb-2 last:mb-0 leading-relaxed text-foreground/90" {...props}>
-              {children}
+              {renderWithBreaks(children)}
             </p>
           ),
           ul: ({ children, ...props }) => (
@@ -51,17 +76,17 @@ export function MarkdownContent({ content, className = "" }: MarkdownContentProp
           ),
           li: ({ children, ...props }) => (
             <li className="leading-relaxed pl-1 marker:text-primary" {...props}>
-              {children}
+              {renderWithBreaks(children)}
             </li>
           ),
           strong: ({ children, ...props }) => (
             <strong className="font-semibold text-foreground" {...props}>
-              {children}
+              {renderWithBreaks(children)}
             </strong>
           ),
           em: ({ children, ...props }) => (
             <em className="italic text-foreground/90" {...props}>
-              {children}
+              {renderWithBreaks(children)}
             </em>
           ),
           blockquote: ({ children, ...props }) => (
@@ -69,12 +94,12 @@ export function MarkdownContent({ content, className = "" }: MarkdownContentProp
               className="my-2 rounded-r-md border-l-2 border-primary/70 bg-primary/5 py-1.5 pl-3 pr-2 italic text-muted-foreground"
               {...props}
             >
-              {children}
+              {renderWithBreaks(children)}
             </blockquote>
           ),
           pre: ({ children, ...props }) => (
             <pre
-              className="my-2 overflow-x-auto rounded-lg border border-border bg-card/90 p-3 font-mono text-xs text-foreground shadow-xs"
+              className="my-2 overflow-x-auto rounded-xl border border-border bg-card/90 p-3 font-mono text-xs text-foreground shadow-2xs"
               {...props}
             >
               {children}
@@ -107,25 +132,25 @@ export function MarkdownContent({ content, className = "" }: MarkdownContentProp
             );
           },
           table: ({ children, ...props }) => (
-            <div className="my-3 overflow-x-auto rounded-lg border border-border">
-              <table className="w-full border-collapse text-left text-xs" {...props}>
+            <div className="my-3 overflow-x-auto rounded-xl border border-border/80 bg-card/70 shadow-2xs -mx-0.5 sm:mx-0">
+              <table className="w-full min-w-[340px] border-collapse text-left text-xs" {...props}>
                 {children}
               </table>
             </div>
           ),
           thead: ({ children, ...props }) => (
-            <thead className="bg-muted/70" {...props}>
+            <thead className="bg-muted/80 border-b border-border/70" {...props}>
               {children}
             </thead>
           ),
           th: ({ children, ...props }) => (
-            <th className="border-b border-border p-2 font-semibold text-foreground" {...props}>
-              {children}
+            <th className="px-3 py-2.5 font-semibold text-foreground whitespace-nowrap text-left text-[11px] uppercase tracking-wider" {...props}>
+              {renderWithBreaks(children)}
             </th>
           ),
           td: ({ children, ...props }) => (
-            <td className="border-b border-border/40 p-2 text-foreground/90" {...props}>
-              {children}
+            <td className="border-b border-border/30 px-3 py-2.5 text-foreground/90 align-top leading-relaxed text-xs break-words" {...props}>
+              {renderWithBreaks(children)}
             </td>
           ),
           a: ({ children, ...props }) => (

@@ -90,7 +90,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       {/* Main Content Area (with bottom padding for mobile navigation) */}
-      <main className="mx-auto max-w-6xl px-3 sm:px-4 py-5 sm:py-8 pb-24 sm:pb-8">{children}</main>
+      <main
+        className={cn(
+          "mx-auto max-w-6xl",
+          pathname === "/chat"
+            ? "p-0 sm:px-4 sm:py-6"
+            : "px-3 sm:px-4 py-5 sm:py-8 pb-24 sm:pb-8",
+        )}
+      >
+        {children}
+      </main>
 
       {/* Mobile Bottom Navigation Bar */}
       <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-md px-2 py-1.5 shadow-lg">

@@ -273,7 +273,7 @@ function ChatPage() {
 
   return (
     <AppLayout>
-      <div className="flex h-[calc(100vh-11.5rem)] sm:h-[calc(100vh-8.5rem)] w-full gap-4 max-w-6xl mx-auto">
+      <div className="flex h-[calc(100dvh-7rem)] sm:h-[calc(100vh-8rem)] w-full gap-4 max-w-6xl mx-auto">
         {/* Left Sidebar: Previous Conversations (Desktop & Mobile Drawer) */}
         <aside
           className={`fixed inset-y-0 left-0 z-40 w-72 flex-col border-r border-border bg-card p-3 shadow-lg transition-transform duration-200 md:static md:z-0 md:flex md:w-64 md:rounded-xl md:border md:shadow-xs lg:w-72 ${
@@ -353,14 +353,14 @@ function ChatPage() {
         )}
 
         {/* Right Main Chat Container */}
-        <main className="flex flex-1 flex-col rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+        <main className="flex flex-1 flex-col rounded-none sm:rounded-2xl border-0 sm:border border-border bg-background sm:bg-card shadow-none sm:shadow-xs overflow-hidden">
           {/* Chat Header Bar */}
-          <div className="flex items-center justify-between border-b border-border/60 px-4 py-3 bg-muted/20">
+          <div className="flex items-center justify-between border-b border-border/60 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-card/80 sm:bg-muted/20 backdrop-blur-xs">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
+                className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground md:hidden cursor-pointer"
                 aria-label="Toggle history"
               >
                 <PanelLeft className="h-4 w-4" />
@@ -376,7 +376,7 @@ function ChatPage() {
             <button
               onClick={startNewChat}
               disabled={streaming}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-input bg-card px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-accent disabled:opacity-50 transition-colors shadow-xs"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-input bg-card px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-accent disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5 text-primary" />
               New Chat
@@ -384,7 +384,7 @@ function ChatPage() {
           </div>
 
           {/* Messages Scroll Area */}
-          <div className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
+          <div className="flex-1 space-y-4 overflow-y-auto px-3 py-3 sm:p-5">
             {loadingHistory ? (
               <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
                 Loading conversation…
@@ -405,7 +405,7 @@ function ChatPage() {
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="rounded-full border border-input bg-background/80 px-3.5 py-1.5 text-xs text-foreground transition-colors hover:bg-accent hover:border-primary/40 shadow-xs"
+                      className="rounded-full border border-input bg-background/80 px-3.5 py-1.5 text-xs text-foreground transition-colors hover:bg-accent hover:border-primary/40 shadow-xs cursor-pointer"
                     >
                       {s}
                     </button>
@@ -414,48 +414,44 @@ function ChatPage() {
               </div>
             ) : (
               messages.map((msg, i) => (
-                <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}>
-                  {msg.role === "assistant" && (
-                    <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs">
-                      <Bot className="h-4 w-4" />
-                    </span>
-                  )}
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-xs ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-xs"
-                        : "bg-muted/70 text-foreground border border-border/40 rounded-bl-xs"
-                    }`}
-                  >
-                    {msg.role === "assistant" ? (
-                      <MarkdownContent
-                        content={msg.content || (streaming && i === messages.length - 1 ? "…" : "")}
-                      />
-                    ) : (
-                      <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                    )}
-                    {msg.charts?.map((chart, j) => {
-                      const data = chart.data as { category?: string; merchant?: string; total: number }[];
-                      const key = data[0]?.category !== undefined ? "category" : "merchant";
-                      return (
-                        <div key={j} className="mt-3 rounded-lg bg-card p-3 border border-border/50">
-                          <ResponsiveContainer width="100%" height={180}>
-                            <BarChart data={data} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.6} />
-                              <XAxis dataKey={key} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} stroke="var(--border)" />
-                              <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} stroke="var(--border)" tickFormatter={formatCompactCurrency} />
-                              <Tooltip content={<CustomChartTooltip />} cursor={{ fill: "var(--accent)", opacity: 0.2 }} />
-                              <Bar dataKey="total" name="Total" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {msg.role === "user" && (
-                    <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-xs">
-                      <User className="h-4 w-4" />
-                    </span>
+                <div key={i} className="w-full">
+                  {msg.role === "user" ? (
+                    <div className="flex justify-end">
+                      <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-br-xs bg-primary text-primary-foreground px-4 py-2.5 text-sm shadow-xs">
+                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col w-full max-w-full">
+                      <div className="flex items-center gap-1.5 mb-1.5 text-xs font-semibold text-primary">
+                        <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/15 text-primary shrink-0">
+                          <Bot className="h-3.5 w-3.5" />
+                        </span>
+                        <span>SpendWise AI</span>
+                      </div>
+                      <div className="w-full rounded-2xl sm:rounded-xl bg-card sm:bg-muted/40 p-3.5 sm:p-4 border border-border/50 text-foreground text-sm shadow-2xs">
+                        <MarkdownContent
+                          content={msg.content || (streaming && i === messages.length - 1 ? "…" : "")}
+                        />
+                        {msg.charts?.map((chart, j) => {
+                          const data = chart.data as { category?: string; merchant?: string; total: number }[];
+                          const key = data[0]?.category !== undefined ? "category" : "merchant";
+                          return (
+                            <div key={j} className="mt-3 rounded-xl bg-background/80 p-3 border border-border/50">
+                              <ResponsiveContainer width="100%" height={180}>
+                                <BarChart data={data} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
+                                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.6} />
+                                  <XAxis dataKey={key} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} stroke="var(--border)" />
+                                  <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} stroke="var(--border)" tickFormatter={formatCompactCurrency} />
+                                  <Tooltip content={<CustomChartTooltip />} cursor={{ fill: "var(--accent)", opacity: 0.2 }} />
+                                  <Bar dataKey="total" name="Total" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                              </ResponsiveContainer>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   )}
                 </div>
               ))
@@ -464,19 +460,19 @@ function ChatPage() {
           </div>
 
           {/* Prompt Input Form */}
-          <div className="border-t border-border/60 p-3 sm:p-4 bg-muted/10">
+          <div className="border-t border-border/60 p-2.5 sm:p-4 bg-card/90 sm:bg-muted/10 backdrop-blur-xs">
             <form onSubmit={onSubmit} className="flex gap-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about your spending, budgets, or savings…"
-                className="flex-1 rounded-xl border border-input bg-card px-4 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                placeholder="Ask about spending, budgets, savings…"
+                className="flex-1 rounded-xl border border-input bg-background sm:bg-card px-3.5 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow"
               />
               <button
                 type="submit"
                 disabled={streaming || !input.trim()}
                 aria-label="Send message"
-                className="flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-opacity shadow-xs cursor-pointer"
+                className="flex items-center justify-center rounded-xl bg-primary px-3.5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-opacity shadow-xs cursor-pointer shrink-0"
               >
                 <Send className="h-4 w-4" />
               </button>
