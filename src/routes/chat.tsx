@@ -92,14 +92,16 @@ function ChatPage() {
             setMessages((m) => {
               const copy = [...m];
               const last = copy[copy.length - 1];
-              copy[copy.length - 1] = { ...last, content: last.content + payload.text };
+              if (!last) return copy;
+              copy[copy.length - 1] = { role: last.role, content: last.content + payload.text, charts: last.charts };
               return copy;
             });
           } else if (event === "chart") {
             setMessages((m) => {
               const copy = [...m];
               const last = copy[copy.length - 1];
-              copy[copy.length - 1] = { ...last, charts: [...(last.charts ?? []), payload] };
+              if (!last) return copy;
+              copy[copy.length - 1] = { role: last.role, content: last.content, charts: [...(last.charts ?? []), payload] };
               return copy;
             });
           } else if (event === "error") {

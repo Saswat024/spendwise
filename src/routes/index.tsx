@@ -134,7 +134,7 @@ function Dashboard() {
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-medium text-card-foreground">Income vs expenses</h2>
           <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={trend.data}>
+            <LineChart data={trend.data ?? []}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
               <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
