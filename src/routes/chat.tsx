@@ -111,7 +111,7 @@ function ChatPage() {
           } else if (event === "error") {
             setMessages((m) => {
               const copy = [...m];
-              copy[copy.length - 1] = { role: "assistant", content: payload.message };
+              copy[copy.length - 1] = { role: "assistant", content: payload.message, charts: [] };
               return copy;
             });
           }
@@ -123,6 +123,7 @@ function ChatPage() {
         copy[copy.length - 1] = {
           role: "assistant",
           content: "Sorry — I couldn't reach the assistant. Is the backend running?",
+          charts: [],
         };
         return copy;
       });
