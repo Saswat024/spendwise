@@ -60,22 +60,22 @@ function BudgetsPage() {
 
       <form
         onSubmit={onSubmit}
-        className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+        className="mb-6 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
       >
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 flex-1">
           <label className="text-sm font-medium text-card-foreground">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="block rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
           >
             {CATEGORIES.map((c) => (
               <option key={c}>{c}</option>
             ))}
           </select>
         </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-card-foreground">Monthly limit</label>
+        <div className="space-y-1.5 flex-1 sm:max-w-44">
+          <label className="text-sm font-medium text-card-foreground">Monthly limit (₹)</label>
           <input
             type="number"
             step="0.01"
@@ -84,13 +84,13 @@ function BudgetsPage() {
             value={limit}
             onChange={(e) => setLimit(e.target.value)}
             placeholder="500"
-            className="block w-36 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
         <button
           type="submit"
           disabled={add.isPending}
-          className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          className="flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50 cursor-pointer"
         >
           <Plus className="h-4 w-4" /> Set budget
         </button>

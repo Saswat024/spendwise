@@ -58,9 +58,9 @@ export const CATEGORIES = [
 ];
 
 export function formatMoney(n: number): string {
-  return n.toLocaleString(undefined, {
+  return n.toLocaleString("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 2,
   });
 }

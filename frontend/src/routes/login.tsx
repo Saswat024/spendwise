@@ -52,9 +52,7 @@ function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-3">
-          <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Wallet className="h-6 w-6" />
-          </span>
+          <img src="/favicon.png" alt="SpendWise" className="h-14 w-14 rounded-2xl shadow-md object-contain" />
           <h1 className="text-2xl font-semibold text-foreground">SpendWise</h1>
           <p className="text-sm text-muted-foreground">
             {mode === "login" ? "Welcome back" : "Create your account"}

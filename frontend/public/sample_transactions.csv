@@ -1,0 +1,16 @@
+date,amount,type,category,merchant,note
+01-09-2026,3500.00,income,Salary,Tech Corp,Monthly salary paycheck
+02-09-2026,1200.00,expense,Housing,City View Apartments,Monthly rent payment
+03-09-2026,84.50,expense,Groceries,Trader Joe's,Weekly grocery shopping
+04-09-2026,45.20,expense,Dining,Blue Bottle Coffee,Team coffee & snacks
+05-09-2026,65.00,expense,Utilities,City Power & Electric,Electric bill
+06-09-2026,28.75,expense,Transport,Shell Gas,Fuel refill
+08-09-2026,129.99,expense,Shopping,Amazon,Electronics cables and adapter
+10-09-2026,55.00,expense,Dining,Chipotle,Dinner with friends
+12-09-2026,95.40,expense,Groceries,Whole Foods Market,Organic pantry restock
+15-09-2026,15.99,expense,Entertainment,Netflix,Monthly subscription
+18-09-2026,250.00,income,Freelance,Upwork,Website design consultation
+20-09-2026,42.00,expense,Health,CVS Pharmacy,Vitamins and medicine
+22-09-2026,38.50,expense,Transport,Uber,Ride to airport
+25-09-2026,110.00,expense,Dining,Olive Garden,Family dinner
+28-09-2026,76.30,expense,Groceries,Costco,Household supplies

@@ -29,14 +29,28 @@ def month_range(month: str) -> tuple[datetime, datetime]:
     return start, end
 
 
+def parse_date_param(val: Optional[str]) -> Optional[date]:
+    if not val:
+        return None
+    val = val.strip()
+    for fmt in ("%d-%m-%Y", "%d/%m/%Y", "%Y-%m-%d", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(val, fmt).date()
+        except ValueError:
+            pass
+    return None
+
+
 @router.get("", response_model=TransactionPage)
 async def list_transactions(
     user_id: str = Depends(get_current_user_id),
     category: Optional[str] = None,
     type: Optional[TxType] = None,
-    start: Optional[date] = None,
-    end: Optional[date] = None,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
     search: Optional[str] = None,
+    sort_by: Optional[str] = Query("date", description="Sort by 'date' or 'amount'"),
+    sort_order: Optional[str] = Query("desc", description="Sort order 'asc' or 'desc'"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
 ):
@@ -47,10 +61,12 @@ async def list_transactions(
         q["type"] = type
     if start or end:
         q["date"] = {}
-        if start:
-            q["date"]["$gte"] = datetime.combine(start, datetime.min.time())
-        if end:
-            q["date"]["$lte"] = datetime.combine(end, datetime.max.time())
+        s_date = parse_date_param(start)
+        if s_date:
+            q["date"]["$gte"] = datetime.combine(s_date, datetime.min.time())
+        e_date = parse_date_param(end)
+        if e_date:
+            q["date"]["$lte"] = datetime.combine(e_date, datetime.max.time())
     if search:
         q["$or"] = [
             {"merchant": {"$regex": search, "$options": "i"}},
@@ -58,12 +74,36 @@ async def list_transactions(
             {"category": {"$regex": search, "$options": "i"}},
         ]
     total = await transactions.count_documents(q)
-    cursor = (
-        transactions.find(q)
-        .sort("date", -1)
-        .skip((page - 1) * page_size)
-        .limit(page_size)
-    )
+
+    field = "amount" if sort_by == "amount" else "date"
+    direction = 1 if sort_order == "asc" else -1
+
+    if sort_by == "amount":
+        pipeline = [
+            {"$match": q},
+            {
+                "$addFields": {
+                    "signed_amount": {
+                        "$cond": [
+                            {"$eq": ["$type", "income"]},
+                            "$amount",
+                            {"$multiply": ["$amount", -1]},
+                        ]
+                    }
+                }
+            },
+            {"$sort": {"signed_amount": direction, "_id": direction}},
+            {"$skip": (page - 1) * page_size},
+            {"$limit": page_size},
+        ]
+        cursor = transactions.aggregate(pipeline)
+    else:
+        cursor = (
+            transactions.find(q)
+            .sort([("date", direction), ("_id", direction)])
+            .skip((page - 1) * page_size)
+            .limit(page_size)
+        )
     items = [tx_out(doc) async for doc in cursor]
     return TransactionPage(items=items, total=total, page=page, page_size=page_size)
 
@@ -92,6 +132,13 @@ async def update_transaction(
     if not result:
         raise HTTPException(404, "Transaction not found")
     return tx_out(result)
+
+
+@router.delete("/all", status_code=200)
+@router.delete("", status_code=200)
+async def delete_all_transactions(user_id: str = Depends(get_current_user_id)):
+    result = await transactions.delete_many({"user_id": user_id})
+    return {"deleted_count": result.deleted_count}
 
 
 @router.delete("/{tx_id}", status_code=204)

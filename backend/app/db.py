@@ -1,8 +1,9 @@
+import certifi
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from .config import settings
 
-client = AsyncIOMotorClient(settings.mongodb_uri)
+client = AsyncIOMotorClient(settings.mongodb_uri, tlsCAFile=certifi.where())
 db = client.get_default_database("spendwise")
 
 users = db["users"]
@@ -17,3 +18,4 @@ async def ensure_indexes() -> None:
     await transactions.create_index([("user_id", 1), ("category", 1)])
     await budgets.create_index([("user_id", 1), ("category", 1)], unique=True)
     await chat_sessions.create_index([("user_id", 1), ("session_id", 1)], unique=True)
+    await chat_sessions.create_index([("user_id", 1), ("updated_at", -1)])

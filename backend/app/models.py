@@ -1,7 +1,7 @@
-from datetime import date
-from typing import Literal, Optional
+from datetime import date, datetime
+from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class SignupIn(BaseModel):
@@ -37,6 +37,18 @@ class TransactionIn(BaseModel):
     merchant: Optional[str] = Field(default=None, max_length=120)
     note: Optional[str] = Field(default=None, max_length=500)
     date: date
+
+    @field_validator("date", mode="before")
+    @classmethod
+    def parse_flexible_date(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            v = v.strip()
+            for fmt in ("%d-%m-%Y", "%d/%m/%Y", "%Y-%m-%d", "%Y/%m/%d"):
+                try:
+                    return datetime.strptime(v, fmt).date()
+                except ValueError:
+                    pass
+        return v
 
 
 class TransactionOut(TransactionIn):
