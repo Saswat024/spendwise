@@ -46,7 +46,14 @@ function ChatPage() {
       headers: { Authorization: `Bearer ${getToken()}` },
     })
       .then((r) => (r.ok ? r.json() : { messages: [] }))
-      .then((d) => setMessages(d.messages ?? []))
+      .then((d) =>
+        setMessages(
+          (d.messages ?? []).map((m: { role: "user" | "assistant"; content: string }) => ({
+            ...m,
+            charts: [],
+          })),
+        ),
+      )
       .catch(() => {});
   }, []);
 
