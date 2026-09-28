@@ -46,7 +46,14 @@ function ChatPage() {
       headers: { Authorization: `Bearer ${getToken()}` },
     })
       .then((r) => (r.ok ? r.json() : { messages: [] }))
-      .then((d) => setMessages(d.messages ?? []))
+      .then((d) =>
+        setMessages(
+          (d.messages ?? []).map((m: { role: "user" | "assistant"; content: string }) => ({
+            ...m,
+            charts: [],
+          })),
+        ),
+      )
       .catch(() => {});
   }, []);
 
@@ -59,7 +66,11 @@ function ChatPage() {
     if (!message || streaming) return;
     setInput("");
     setStreaming(true);
-    setMessages((m) => [...m, { role: "user", content: message }, { role: "assistant", content: "" }]);
+    setMessages((m) => [
+      ...m,
+      { role: "user", content: message, charts: [] },
+      { role: "assistant", content: "", charts: [] },
+    ]);
 
     try {
       const res = await fetch(`${API_BASE}/chat`, {
@@ -92,20 +103,22 @@ function ChatPage() {
             setMessages((m) => {
               const copy = [...m];
               const last = copy[copy.length - 1];
-              copy[copy.length - 1] = { ...last, content: last.content + payload.text };
+              if (!last) return copy;
+              copy[copy.length - 1] = { role: last.role, content: last.content + payload.text, charts: last.charts };
               return copy;
             });
           } else if (event === "chart") {
             setMessages((m) => {
               const copy = [...m];
               const last = copy[copy.length - 1];
-              copy[copy.length - 1] = { ...last, charts: [...(last.charts ?? []), payload] };
+              if (!last) return copy;
+              copy[copy.length - 1] = { role: last.role, content: last.content, charts: [...(last.charts ?? []), payload] };
               return copy;
             });
           } else if (event === "error") {
             setMessages((m) => {
               const copy = [...m];
-              copy[copy.length - 1] = { role: "assistant", content: payload.message };
+              copy[copy.length - 1] = { role: "assistant", content: payload.message, charts: [] };
               return copy;
             });
           }
@@ -117,6 +130,7 @@ function ChatPage() {
         copy[copy.length - 1] = {
           role: "assistant",
           content: "Sorry — I couldn't reach the assistant. Is the backend running?",
+          charts: [],
         };
         return copy;
       });

@@ -40,7 +40,7 @@ export interface Budget {
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  charts?: { type: string; data: Record<string, unknown>[] }[];
+  charts: { type: string; data: Record<string, unknown>[] }[];
 }
 
 export const CATEGORIES = [

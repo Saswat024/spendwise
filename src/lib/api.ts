@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+const API_BASE = import.meta.env["VITE_API_BASE"] ?? "http://localhost:8000";
 
 const TOKEN_KEY = "spendwise_token";
 const USER_KEY = "spendwise_user";
@@ -9,21 +9,26 @@ export interface AuthUser {
   name: string;
 }
 
+const isBrowser = typeof window !== "undefined";
+
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  return isBrowser ? localStorage.getItem(TOKEN_KEY) : null;
 }
 
 export function getStoredUser(): AuthUser | null {
+  if (!isBrowser) return null;
   const raw = localStorage.getItem(USER_KEY);
   return raw ? (JSON.parse(raw) as AuthUser) : null;
 }
 
 export function storeAuth(token: string, user: AuthUser) {
+  if (!isBrowser) return;
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
 export function clearAuth() {
+  if (!isBrowser) return;
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
 }
