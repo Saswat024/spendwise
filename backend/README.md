@@ -27,7 +27,13 @@ Copy `.env.example` to `.env` and fill in your values.
 
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+
+# Windows:
+.\.venv\Scripts\activate
+# macOS/Linux:
+source .venv/bin/activate
+
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
@@ -55,13 +61,22 @@ Any container host works (Render, Railway, Fly.io, Cloud Run, ECS...):
 
 ## API overview
 
-- `POST /auth/signup`, `POST /auth/login` — JWT issue, bcrypt password hashing
-- `GET/POST/PUT/DELETE /transactions` — filters (category, type, date range, search), pagination
+- `POST /auth/signup`, `POST /auth/login` — JWT issuance and authentication
+- `GET /transactions` — filter by category, type, date range (`start`, `end`), search; sort by `sort_by` (`date`, `amount`) & `sort_order` (`asc`, `desc`); pagination (`page`, `page_size`)
+- `POST /transactions` — create a new transaction
+- `PUT /transactions/{tx_id}` — update an existing transaction
+- `DELETE /transactions/{tx_id}` — delete a specific transaction
+- `DELETE /transactions` or `DELETE /transactions/all` — delete all transactions for the authenticated user
 - `GET /transactions/summary?month=YYYY-MM` — category breakdown + income vs expense totals
 - `GET /transactions/trend?months=6` — monthly income/expense trend
-- `GET/POST/DELETE /budgets` — per-category limits with computed spent-so-far and over-budget flag
-- `POST /chat` — `{message, session_id}`, SSE stream of `token` / `chart` / `done` events
-- `GET /chat/history?session_id=...` — persisted chat history
+- `GET /budgets` — list category budgets with current month spent-so-far and over-budget status
+- `POST /budgets` — create or update a monthly budget for a category
+- `DELETE /budgets/{budget_id}` — delete a category budget
+- `POST /chat` — `{message, session_id}`, SSE stream of `token` / `chart` / `done` / `error` events
+- `GET /chat/sessions` — list all saved chat conversations with titles and timestamps
+- `DELETE /chat/sessions/{session_id}` — delete a conversation session
+- `GET /chat/history?session_id=...` — fetch persisted chat messages for a session
+- `GET /health` — health check status
 
 All endpoints except `/auth/*` and `/health` require `Authorization: Bearer <jwt>`.
 
@@ -69,5 +84,5 @@ All endpoints except `/auth/*` and `/health` require `Authorization: Bearer <jwt
 
 - `users`: `{email, name, password_hash}`
 - `transactions`: `{user_id, amount, type: income|expense, category, merchant, note, date}`
-- `budgets`: `{user_id, category, limit}` (unique per user+category)
-- `chat_sessions`: `{user_id, session_id, messages[]}`
+- `budgets`: `{user_id, category, limit}` (unique index per user + category)
+- `chat_sessions`: `{user_id, session_id, title, created_at, updated_at, messages: [{role, content}]}`

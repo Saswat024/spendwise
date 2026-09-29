@@ -5,9 +5,11 @@ SpendWise is a personal finance tracker with automated analytics, budget trackin
 ## Features
 
 - **Dashboard**: Monthly spending overview, expense breakdown by category, and multi-month trend charts.
-- **Transactions**: Add, filter, search, paginate, and track income and expenses.
-- **Budgets**: Set and monitor category-level monthly budgets with visual progress indicators.
-- **AI Assistant**: Natural language chat interface with tool calling and markdown-formatted advice to answer spending questions and suggest savings.
+- **Transactions**: Add, edit, filter, search, paginate, sort, and track income and expenses.
+- **CSV Import**: Import transactions in bulk using CSV files (includes a sample dataset in `sample_transactions.csv`).
+- **Budgets**: Set and monitor category-level monthly budgets with real-time progress indicators.
+- **AI Assistant**: Natural language chat interface with tool calling, chart generation, and multi-session conversation history.
+- **Currency & Localization**: Formatted in Indian Rupees (INR / ₹) with localized numbering.
 
 ## Tech Stack
 
@@ -32,7 +34,7 @@ pip install -r requirements.txt
 Create a `.env` file in `backend/` based on `.env.example`:
 
 ```ini
-MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=Cluster0
+MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/spendwise?appName=Cluster0
 JWT_SECRET=your-secret-key-here
 LLM_API_KEY=gsk_...
 ```
@@ -42,6 +44,8 @@ Start the backend server:
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
+
+Interactive API documentation will be available at [http://localhost:8000/docs](http://localhost:8000/docs).
 
 ### 2. Frontend Setup
 
@@ -54,3 +58,8 @@ npm run dev
 ```
 
 Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+> **Note**: By default, the frontend connects to `http://localhost:8000`. To customize the backend URL, create a `.env` file in `frontend/` with:
+> ```ini
+> VITE_API_BASE=http://localhost:8000
+> ```
